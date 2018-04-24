@@ -1,8 +1,13 @@
 package pw.matyi.erettsegi;
 
+import android.Manifest;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -19,8 +24,34 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        permission_check();
+
         ev = findViewById(R.id.ev);
 
+    }
+
+    private void permission_check() {
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},100);
+                return;
+            }
+        }
+
+        initialize();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 100 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            initialize();
+        } else {
+            permission_check();
+        }
+    }
+
+    private void initialize() {
         button = (Button)findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,6 +63,5 @@ public class MainActivity extends AppCompatActivity {
                 Long reference = downloadManager.enqueue(request);
             }
         });
-
-        }
     }
+}
