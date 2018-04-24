@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.FitWindowsLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nincs tárolt link."
+        android:textSize="14sp"/>
+
+    <EditText
+        android:id="@+id/ev"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="4"
+        android:hint="Évszám"
+        android:inputType="number" />
+
+    <CheckBox
+        android:id="@+id/majus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Május" />
+
+    <CheckBox
+        android:id="@+id/oktober"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Október" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:text="Letöltés" />
+
+</android.support.v7.widget.FitWindowsLinearLayout>
