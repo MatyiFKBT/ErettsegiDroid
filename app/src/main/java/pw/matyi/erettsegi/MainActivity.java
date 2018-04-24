@@ -3,6 +3,7 @@ package pw.matyi.erettsegi;
 import android.Manifest;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -15,8 +16,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.File;
+
+import static android.os.Environment.DIRECTORY_DOWNLOADS;
+
 public class MainActivity extends AppCompatActivity {
-    EditText ev;
+    EditText evinput;
+
     Button button;
     DownloadManager downloadManager;
     @Override
@@ -24,9 +30,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        evinput = (EditText)findViewById(R.id.ev);
         permission_check();
 
-        ev = findViewById(R.id.ev);
 
     }
 
@@ -50,17 +56,36 @@ public class MainActivity extends AppCompatActivity {
             permission_check();
         }
     }
+    public void view(View v) {
+        Intent i = new Intent();
+        i.setAction(DownloadManager.ACTION_VIEW_DOWNLOADS);
+        startActivity(i);
+    }
 
     private void initialize() {
         button = (Button)findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String ev = evinput.getText().toString();
+                String link = "http://dload.oktatas.educatio.hu/erettsegi/feladatok_20"+ev+"osz_emelt/e_inf_"+ev+"okt_fl.pdf";
+                String[] linksplit = link.split("/");
+                String fileName = linksplit[linksplit.length-1];
                 downloadManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
-                Uri uri = Uri.parse("http://dload.oktatas.educatio.hu/erettsegi/feladatok_2015osz_emelt/e_inf_15okt_fl.pdf");
+                Uri uri = Uri.parse(link);
                 DownloadManager.Request request = new DownloadManager.Request(uri);
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, File.separator + "Erettsegi" + File.separator + fileName);
                 Long reference = downloadManager.enqueue(request);
+            }
+        });
+        button.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent marketpdf = new Intent(Intent.ACTION_VIEW);
+                marketpdf.setData(Uri.parse("market://details?id=com.google.android.apps.pdfviewer"));
+                startActivity(marketpdf);
+                return true;
             }
         });
     }

@@ -11,7 +11,7 @@
         android:id="@+id/text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nincs tárolt link."
+        android:text="Az alkalmazás jelenleg csak az Évszámot veszi figyelembe."
         android:textSize="14sp"/>
 
     <EditText
@@ -19,8 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="4"
-        android:hint="Évszám"
-        android:inputType="number" />
+        android:hint="Évszám"/>
 
     <CheckBox
         android:id="@+id/majus"
@@ -40,5 +39,12 @@
         android:layout_height="wrap_content"
         android:baselineAligned="false"
         android:text="Letöltés" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="view"
+        android:text="Letöltések megjelenítése" />
 
 </android.support.v7.widget.FitWindowsLinearLayout>
