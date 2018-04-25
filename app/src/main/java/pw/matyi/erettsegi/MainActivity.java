@@ -2,6 +2,7 @@ package pw.matyi.erettsegi;
 
 import android.Manifest;
 import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -26,9 +27,10 @@ import static android.os.Environment.DIRECTORY_DOWNLOADS;
 public class MainActivity extends AppCompatActivity {
     EditText evinput;
     Spinner spinner;
-    CheckBox oktober, majus;
+    CheckBox oktober, majus, megoldas;
     Button button;
     String honap,evszak;
+    Boolean mpdf;
     DownloadManager downloadManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,22 @@ public class MainActivity extends AppCompatActivity {
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, File.separator + "Erettsegi" + File.separator + fileName);
         Long reference = downloadManager.enqueue(request);
-        Toast.makeText(this, "Tárgy: " + targy, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Tárgy: " + targy + "letöltve.", Toast.LENGTH_SHORT).show();
+        if(mpdf){
+            String mlink = "http://dload.oktatas.educatio.hu/erettsegi/feladatok_20"+ev+evszak+"_emelt/e_"+targy+"_"+ev+honap+"_ut.pdf";
+            linksplit = mlink.split("/");
+            fileName = linksplit[linksplit.length - 1];
+            downloadManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
+            uri = Uri.parse(mlink);
+            request = new DownloadManager.Request(uri);
+            //downloadManager.enqueue(request);
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, File.separator + "Erettsegi" + File.separator + fileName);
+            reference = downloadManager.enqueue(request);
+            Toast.makeText(this, "Megoldás letöltve.", Toast.LENGTH_SHORT).show();
+            megoldas.setChecked(false);
+            mpdf = Boolean.FALSE;
+        }
     }
     public void printtoast(String szoveg) {
         Toast.makeText(this, szoveg, Toast.LENGTH_SHORT).show();
@@ -102,6 +119,13 @@ public class MainActivity extends AppCompatActivity {
             honap = "maj";
             evszak = "tavasz";
             printtoast(evszak);
+        }
+    }
+    public void megoldascheck(View v) {
+        megoldas = (CheckBox)v;
+        if (megoldas.isChecked()) {
+            //Set megoldas;
+            mpdf = Boolean.TRUE;
         }
     }
     private void initialize() {
