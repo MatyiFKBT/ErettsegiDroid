@@ -13,8 +13,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 
@@ -22,8 +25,10 @@ import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
 public class MainActivity extends AppCompatActivity {
     EditText evinput;
-
+    Spinner spinner;
+    CheckBox oktober, majus;
     Button button;
+    String honap,evszak;
     DownloadManager downloadManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +39,25 @@ public class MainActivity extends AppCompatActivity {
         permission_check();
 
 
+    }
+
+    private void download() {
+        String ev = evinput.getText().toString();
+        spinner = (Spinner)this.findViewById(R.id.spinner);
+        String targy = getResources().getStringArray(R.array.targy_values)[spinner.getSelectedItemPosition()];
+        String link = "http://dload.oktatas.educatio.hu/erettsegi/feladatok_20"+ev+evszak+"_emelt/e_"+targy+"_"+ev+honap+"_fl.pdf";
+        String[] linksplit = link.split("/");
+        String fileName = linksplit[linksplit.length-1];
+        downloadManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(link);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, File.separator + "Erettsegi" + File.separator + fileName);
+        Long reference = downloadManager.enqueue(request);
+        Toast.makeText(this, "Tárgy: " + targy, Toast.LENGTH_SHORT).show();
+    }
+    public void printtoast(String szoveg) {
+        Toast.makeText(this, szoveg, Toast.LENGTH_SHORT).show();
     }
 
     private void permission_check() {
@@ -56,27 +80,36 @@ public class MainActivity extends AppCompatActivity {
             permission_check();
         }
     }
-    public void view(View v) {
+    public void viewDownloads(View v) {
         Intent i = new Intent();
         i.setAction(DownloadManager.ACTION_VIEW_DOWNLOADS);
         startActivity(i);
     }
 
+    public void itemClicked_o(View v) {
+        oktober = (CheckBox)v;
+        if (oktober.isChecked()) {
+            //Set evszak,honap
+            honap = "okt";
+            evszak = "osz";
+            printtoast(evszak);
+        }
+    }
+    public void itemClicked_m(View v) {
+        majus = (CheckBox)v;
+        if (majus.isChecked()) {
+            //Set evszak,honap
+            honap = "maj";
+            evszak = "tavasz";
+            printtoast(evszak);
+        }
+    }
     private void initialize() {
         button = (Button)findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String ev = evinput.getText().toString();
-                String link = "http://dload.oktatas.educatio.hu/erettsegi/feladatok_20"+ev+"osz_emelt/e_inf_"+ev+"okt_fl.pdf";
-                String[] linksplit = link.split("/");
-                String fileName = linksplit[linksplit.length-1];
-                downloadManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
-                Uri uri = Uri.parse(link);
-                DownloadManager.Request request = new DownloadManager.Request(uri);
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, File.separator + "Erettsegi" + File.separator + fileName);
-                Long reference = downloadManager.enqueue(request);
+                download();
             }
         });
         button.setOnLongClickListener(new View.OnLongClickListener() {
@@ -88,5 +121,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
     }
 }

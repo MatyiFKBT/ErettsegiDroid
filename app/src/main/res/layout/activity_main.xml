@@ -18,33 +18,50 @@
         android:id="@+id/ev"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="4"
-        android:hint="Évszám"/>
+        android:inputType="number"
+        android:hint="Évszám" />
 
     <CheckBox
         android:id="@+id/majus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="itemClicked_m"
         android:text="Május" />
 
     <CheckBox
         android:id="@+id/oktober"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Október" />
+        android:text="Október"
+        android:onClick="itemClicked_o"/>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/targy_lista"
+        android:prompt="@string/targy_v"/>
 
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:baselineAligned="false"
+        android:onClick="download"
         android:text="Letöltés" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="view"
+        android:onClick="viewDownloads"
         android:text="Letöltések megjelenítése" />
+
 
 </android.support.v7.widget.FitWindowsLinearLayout>

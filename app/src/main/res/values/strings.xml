@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">Erettsegi</string>
+    <string name="targy_v">Válassz egy tárgyat:</string>
+
+    <string-array name="targy_lista">
+        <item>Magyar nyelv és irodalom</item>
+        <item>Történelem</item>
+        <item>Matematika</item>
+        <item>Angol</item>
+        <item>Német</item>
+        <item>Informatika</item>
+        <item>Biológia</item>
+        <item>Kémia</item>
+        <item>Földrajz</item>
+        <item>Fizika</item>
+    </string-array>
+    <string-array name="targy_values">
+        <item>magyir</item>
+        <item>tort</item>
+        <item>mat</item>
+        <item>angol</item>
+        <item>nemet</item>
+        <item>inf</item>
+        <item>bio</item>
+        <item>kemia</item>
+        <item>foldrajz</item>
+        <item>fizika</item>
+    </string-array>
+
 </resources>
