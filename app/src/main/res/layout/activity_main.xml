@@ -23,17 +23,24 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:inputType="number"
+        android:textSize="16dp"
         android:hint="Évszám" />
 
-
-
-        <ToggleButton
-            android:id="@+id/toggleButton"
-            android:layout_width="match_parent"
+        <Switch
+            android:id="@+id/szintkapcs"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textOn="Emelt"
-            android:textOff="Közép"/>
+            android:text="Közép   "
+            android:textSize="16dp"
+            android:onClick="szintkapcs"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   Emelt  "
+            android:textColor="@color/fekete"
+            android:textSize="16dp"/>
+
     </LinearLayout>
     <CheckBox
         android:id="@+id/majus"
@@ -54,7 +61,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/targy_lista"
-        android:prompt="@string/targy_v"/>
+        android:prompt="@string/targy_v" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dip"
@@ -66,23 +74,23 @@
             android:id="@+id/megoldas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Megoldást is töltsön le"
-            android:onClick="megoldascheck"/>
+            android:onClick="megoldascheck"
+            android:text="Megoldást is töltsön le" />
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:baselineAligned="false"
-        android:onClick="download"
-        android:text="Letöltés" />
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:onClick="download"
+            android:text="Letöltés" />
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="viewDownloads"
-        android:text="Letöltések megjelenítése" />
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="viewDownloads"
+            android:text="Letöltések megjelenítése" />
     </LinearLayout>
 
 

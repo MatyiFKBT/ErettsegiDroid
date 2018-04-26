@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     CheckBox oktober, majus, megoldas;
     Button button;
     String honap,evszak;
+    String szint, szintbetu;
+    Switch szintkapcs;
     Boolean mpdf;
     DownloadManager downloadManager;
     @Override
@@ -47,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         String ev = evinput.getText().toString();
         spinner = (Spinner)this.findViewById(R.id.spinner);
         String targy = getResources().getStringArray(R.array.targy_values)[spinner.getSelectedItemPosition()];
-        String link = "http://dload.oktatas.educatio.hu/erettsegi/feladatok_20"+ev+evszak+"_emelt/e_"+targy+"_"+ev+honap+"_fl.pdf";
+        String link = "http://dload.oktatas.educatio.hu/erettsegi/feladatok_20"+ev+evszak+"_"+szint+"/"+szintbetu+"_"+targy+"_"+ev+honap+"_fl.pdf";
         String[] linksplit = link.split("/");
         String fileName = linksplit[linksplit.length-1];
         downloadManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
@@ -56,9 +59,9 @@ public class MainActivity extends AppCompatActivity {
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, File.separator + "Erettsegi" + File.separator + fileName);
         Long reference = downloadManager.enqueue(request);
-        //Toast.makeText(this, "Tárgy: " + targy + "letöltve.", Toast.LENGTH_SHORT).show();
+        printtoast("Feladatlap letöltve.");
         if(mpdf){
-            String mlink = "http://dload.oktatas.educatio.hu/erettsegi/feladatok_20"+ev+evszak+"_emelt/e_"+targy+"_"+ev+honap+"_ut.pdf";
+            String mlink = "http://dload.oktatas.educatio.hu/erettsegi/feladatok_20"+ev+evszak+"_"+szint+"/"+szintbetu+"_"+targy+"_"+ev+honap+"_ut.pdf";
             linksplit = mlink.split("/");
             fileName = linksplit[linksplit.length - 1];
             downloadManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
@@ -68,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, File.separator + "Erettsegi" + File.separator + fileName);
             reference = downloadManager.enqueue(request);
-            Toast.makeText(this, "Megoldás letöltve.", Toast.LENGTH_SHORT).show();
+            printtoast("Megoldás letöltve.");
             megoldas.setChecked(false);
             mpdf = Boolean.FALSE;
         }
@@ -112,6 +115,20 @@ public class MainActivity extends AppCompatActivity {
             printtoast(evszak);
         }
     }
+
+    public void szintkapcs(View v) {
+        szintkapcs = (Switch)v;
+        if (szintkapcs.isChecked()) {
+            szint = "emelt";
+            szintbetu = "e";
+            printtoast("Emelt kiválasztva.");
+        } else {
+            szint = "kozep";
+            szintbetu = "k";
+            printtoast("Közép kiválasztva.");
+        }
+    }
+
     public void itemClicked_m(View v) {
         majus = (CheckBox)v;
         if (majus.isChecked()) {
