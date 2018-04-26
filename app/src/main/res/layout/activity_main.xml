@@ -11,7 +11,7 @@
         android:id="@+id/text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Az alkalmazás fejlesztés alatt áll."
+        android:text="@string/disclaimer"
         android:textSize="14sp"/>
     <LinearLayout
         android:id="@+id/linearLayout1"
@@ -19,19 +19,20 @@
         android:layout_height="wrap_content">
     <EditText
         android:id="@+id/ev"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:inputType="number"
-        android:textSize="16dp"
-        android:hint="Évszám" />
+        android:textSize="16sp"
+        android:hint="@string/evszam" />
 
         <Switch
             android:id="@+id/szintkapcs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:checked="false"
             android:text="Közép   "
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:onClick="szintkapcs"
             />
         <TextView
@@ -39,7 +40,7 @@
             android:layout_height="wrap_content"
             android:text="   Emelt  "
             android:textColor="@color/fekete"
-            android:textSize="16dp"/>
+            android:textSize="16sp"/>
 
     </LinearLayout>
     <CheckBox
@@ -47,13 +48,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="itemClicked_m"
-        android:text="Május" />
+        android:text="@string/majű" />
 
     <CheckBox
         android:id="@+id/oktober"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Október"
+        android:text="@string/okt"
         android:onClick="itemClicked_o"/>
 
     <Spinner
@@ -75,22 +76,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="megoldascheck"
-            android:text="Megoldást is töltsön le" />
+            android:text="@string/megoldasCheck" />
 
         <Button
             android:id="@+id/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:baselineAligned="false"
-            android:onClick="download"
-            android:text="Letöltés" />
+            android:text="@string/letoltes" />
 
         <Button
             android:id="@+id/button2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="viewDownloads"
-            android:text="Letöltések megjelenítése" />
+            android:text="@string/viewDownloads" />
     </LinearLayout>
 
 

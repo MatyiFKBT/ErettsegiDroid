@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">Erettsegi</string>
     <string name="targy_v">Válassz egy tárgyat:</string>
+    <string name="letoltes">Letöltés</string>
+    <string name="megoldasCheck">Megoldást is töltsön le</string>
+    <string name="okt">Október</string>
+    <string name="majű">Május</string>
+    <string name="evszam">Évszám</string>
+    <string name="viewDownloads">Letöltések megjelenítése</string>
+    <string name="disclaimer">Az alkalmazás fejlesztés alatt áll.</string>
 
     <string-array name="targy_lista">
         <item>Magyar nyelv és irodalom</item>
