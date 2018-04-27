@@ -8,6 +8,8 @@
     <string name="evszam">Évszám</string>
     <string name="viewDownloads">Letöltések megjelenítése</string>
     <string name="disclaimer">Az alkalmazás fejlesztés alatt áll.</string>
+    <string name="notification_description">Letöltés folyamatban...</string>
+    <string name="update_app_url">https://raw.githubusercontent.com/MatyiFKBT/ErettsegiDroid/master/app-debug.apk</string>
 
     <string-array name="targy_lista">
         <item>Magyar nyelv és irodalom</item>

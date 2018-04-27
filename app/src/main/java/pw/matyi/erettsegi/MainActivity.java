@@ -5,6 +5,7 @@ import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -25,7 +26,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Scanner;
 
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
@@ -34,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     EditText evinput;
     Spinner spinner;
     CheckBox oktober, majus, megoldas;
-    Button button;
+    Button button, button2;
     String honap,evszak;
     String szint, szintbetu;
     Switch szintkapcs;
@@ -176,8 +181,88 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+    public void Update(){
+        try {
+            /*
+            URL url = new URL(apkurl);
+            HttpURLConnection c = (HttpURLConnection) url.openConnection();
+            c.setRequestMethod("GET");
+            c.connect();
+
+            String PATH = Environment.getExternalStorageDirectory() + "/download/";
+            File file = new File(PATH);
+            file.mkdirs();
+            File outputFile = new File(file, "app.apk");
+            FileOutputStream fos = new FileOutputStream(outputFile);
+
+            InputStream is = c.getInputStream();
+
+            byte[] buffer = new byte[1024];
+            int len1 = 0;
+            while ((len1 = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, len1);
+            }
+            fos.close();
+            is.close();
+            */
+            //till here, it works fine - .apk is download to my sdcard in download file
+            // ------------------ LETOLTES INDUL DOWNLOADMANAGERREL
+            String destination = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/";
+            String fileName = "app-debug.apk";
+            destination += fileName;
+            final Uri updateuri = Uri.parse("file://" + destination);
+
+            //Delete update file if exists
+            File file = new File(destination);
+            if (file.exists())
+                //file.delete() - test this, I think sometimes it doesnt work
+                file.delete();
+
+            //get url of app on server
+            String url = getString(R.string.update_app_url);
+
+            //set downloadmanager
+            DownloadManager updateManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
+            DownloadManager.Request updaterequest = new DownloadManager.Request(Uri.parse(url));
+            //updaterequest.setDescription(Main.this.getString(R.string.notification_description));
+            //updaterequest.setTitle(Main.this.getString(R.string.app_name));
+
+            //set destination
+            updaterequest.setDestinationUri(updateuri);
+            //TODO notepad
+            // get download service and enqueue file
+            DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+            Long downloadId = updateManager.enqueue(updaterequest);
+
+            //set BroadcastReceiver to install app when .apk is downloaded
+            BroadcastReceiver onComplete = new BroadcastReceiver() {
+                public void onReceive(Context ctxt, Intent intent) {
+                    Intent install = new Intent(Intent.ACTION_VIEW);
+                    install.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    install.setDataAndType(updateuri,
+                            manager.getMimeTypeForDownloadedFile(downloadId));
+                    startActivity(install);
+
+                    unregisterReceiver(this);
+                    finish();
+                }
+            };
+            //register receiver for when .apk download is compete
+            registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+            // --------------------------- LETOLTES VEGE
+            Intent update = new Intent(Intent.ACTION_VIEW);
+            update.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/download/" + "app.apk")), "application/vnd.android.package-archive");
+            update.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(update);
+
+        } catch (IOException e) {
+            Toast.makeText(getApplicationContext(), "Update error!", Toast.LENGTH_LONG).show();
+        }
+    }
+
     private void initialize() {
         button = (Button)findViewById(R.id.button);
+        button2 = (Button)findViewById(R.id.button2);
         mpdf = Boolean.FALSE;
         szint = "kozep";
         szintbetu = "k";
@@ -187,6 +272,16 @@ public class MainActivity extends AppCompatActivity {
                 download();
             }
         });
+
+        button2.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Update("https://github.com/MatyiFKBT/ErettsegiDroid/releases/download/1.1/app-debug.apk");
+                printtoast("Frissítés elindult");
+                return true;
+            }
+        });
+
         button.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
