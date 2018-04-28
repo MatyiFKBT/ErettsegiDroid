@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Erettsegi</string>
+    <string name="app_name">Érettségi</string>
     <string name="targy_v">Válassz egy tárgyat:</string>
     <string name="letoltes">Letöltés</string>
     <string name="megoldasCheck">Megoldást is töltsön le</string>
@@ -8,10 +8,11 @@
     <string name="evszam">Évszám</string>
     <string name="viewDownloads">Letöltések megjelenítése</string>
     <string name="disclaimer">Az alkalmazás fejlesztés alatt áll.</string>
-    <string name="notification_description">Letöltés folyamatban...</string>
+    <string name="notification_description">Letöltés folyamatban…</string>
     <string name="update_app_url">https://raw.githubusercontent.com/MatyiFKBT/ErettsegiDroid/master/app-debug.apk</string>
 
     <string-array name="targy_lista">
+        <item>Válassz egy tantárgyat!</item>
         <item>Magyar nyelv és irodalom</item>
         <item>Történelem</item>
         <item>Matematika</item>
@@ -24,6 +25,7 @@
         <item>Fizika</item>
     </string-array>
     <string-array name="targy_values">
+        <item>null</item>
         <item>magyir</item>
         <item>tort</item>
         <item>mat</item>

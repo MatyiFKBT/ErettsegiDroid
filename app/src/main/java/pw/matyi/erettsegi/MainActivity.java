@@ -1,9 +1,11 @@
 package pw.matyi.erettsegi;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -16,6 +18,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     String fileName;
     Boolean mpdf;
     DownloadManager downloadManager;
+    long downloadReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
         String ev = evinput.getText().toString();
         spinner = (Spinner)this.findViewById(R.id.spinner);
         String targy = getResources().getStringArray(R.array.targy_values)[spinner.getSelectedItemPosition()];
+        if(targy == "null") {
+            printtoast("Válassz egy tantárgyat!");
+        }
         String link = "http://dload.oktatas.educatio.hu/erettsegi/feladatok_20"+ev+evszak+"_"+szint+"/"+szintbetu+"_"+targy+"_"+ev+honap+"_fl.pdf";
         String[] linksplit = link.split("/");
         fileName = linksplit[linksplit.length-1];
@@ -168,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void megoldascheck(View v) {
         megoldas = (CheckBox)v;
-        String buttontext = getString(R.id.button);
+        //String buttontext = getString(R.id.button);
         if (megoldas.isChecked()) {
             //Set megoldas;
             mpdf = Boolean.TRUE;
@@ -181,86 +188,65 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-    public void Update(){
-        try {
-            /*
-            URL url = new URL(apkurl);
-            HttpURLConnection c = (HttpURLConnection) url.openConnection();
-            c.setRequestMethod("GET");
-            c.connect();
 
-            String PATH = Environment.getExternalStorageDirectory() + "/download/";
-            File file = new File(PATH);
-            file.mkdirs();
-            File outputFile = new File(file, "app.apk");
-            FileOutputStream fos = new FileOutputStream(outputFile);
+    public void Update() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setMessage("Biztosan frissíteni szeretnéd? Lehet hogy nem stabil a legfrisebb változat!\n(A frissítés jelenleg csak wifivel lehetséges.")
+                .setPositiveButton("Igen", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        printtoast("Rendben, máris frissítjük az alkalmazást.");
+                        downloadManager = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);
+                        String apkurl = "https://github.com/MatyiFKBT/ErettsegiDroid/releases/download/1.1/app-debug.apk";
+                        Uri Download_Uri = Uri.parse(apkurl);
+                        DownloadManager.Request u_request = new DownloadManager.Request(Download_Uri);
+                        u_request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
+                        u_request.setAllowedOverRoaming(false);
+                        u_request.setTitle("My Android App Update");
+                        String destination = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Erettsegi/";
+                        File update = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Erettsegi/update.apk");
+                        if (update.exists()) {
+                            //file.delete() - test this, I think sometimes it doesnt work
+                            update.delete();
+                            printtoast("Előző update.apk sikeresen törölve.");
+                        }
+                        u_request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, File.separator + "Erettsegi" + File.separator + "update.apk");
+                        downloadReference = downloadManager.enqueue(u_request);
+                        Log.d("ADebugtag", "Value:" + downloadReference);
+                        registerReceiver(downloadReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                    }
+                })
+                .setNegativeButton("Nem, majd máskor", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        printtoast("Oké, akkor majd ha készen állsz, frissítsd");
+                    }
+                });
+        builder.create().show();
 
-            InputStream is = c.getInputStream();
-
-            byte[] buffer = new byte[1024];
-            int len1 = 0;
-            while ((len1 = is.read(buffer)) != -1) {
-                fos.write(buffer, 0, len1);
-            }
-            fos.close();
-            is.close();
-            */
-            //till here, it works fine - .apk is download to my sdcard in download file
-            // ------------------ LETOLTES INDUL DOWNLOADMANAGERREL
-            String destination = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/";
-            String fileName = "app-debug.apk";
-            destination += fileName;
-            final Uri updateuri = Uri.parse("file://" + destination);
-
-            //Delete update file if exists
-            File file = new File(destination);
-            if (file.exists())
-                //file.delete() - test this, I think sometimes it doesnt work
-                file.delete();
-
-            //get url of app on server
-            String url = getString(R.string.update_app_url);
-
-            //set downloadmanager
-            DownloadManager updateManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
-            DownloadManager.Request updaterequest = new DownloadManager.Request(Uri.parse(url));
-            //updaterequest.setDescription(Main.this.getString(R.string.notification_description));
-            //updaterequest.setTitle(Main.this.getString(R.string.app_name));
-
-            //set destination
-            updaterequest.setDestinationUri(updateuri);
-            //TODO notepad
-            // get download service and enqueue file
-            DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-            Long downloadId = updateManager.enqueue(updaterequest);
-
-            //set BroadcastReceiver to install app when .apk is downloaded
-            BroadcastReceiver onComplete = new BroadcastReceiver() {
-                public void onReceive(Context ctxt, Intent intent) {
-                    Intent install = new Intent(Intent.ACTION_VIEW);
-                    install.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    install.setDataAndType(updateuri,
-                            manager.getMimeTypeForDownloadedFile(downloadId));
-                    startActivity(install);
-
-                    unregisterReceiver(this);
-                    finish();
-                }
-            };
-            //register receiver for when .apk download is compete
-            registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-            // --------------------------- LETOLTES VEGE
-            Intent update = new Intent(Intent.ACTION_VIEW);
-            update.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/download/" + "app.apk")), "application/vnd.android.package-archive");
-            update.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(update);
-
-        } catch (IOException e) {
-            Toast.makeText(getApplicationContext(), "Update error!", Toast.LENGTH_LONG).show();
-        }
     }
 
-    private void initialize() {
+    BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Intent installIntent = new Intent(Intent.ACTION_VIEW);
+            String destination = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Erettsegi/";
+            String fileName = "update.apk";
+            destination += fileName;
+            final Uri fileuri = Uri.parse("file://" + destination);
+            installIntent.setDataAndType(fileuri,
+                    downloadManager.getMimeTypeForDownloadedFile(downloadReference));
+            Log.d("ADebugTag", "Value: " + fileuri);
+            installIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            printtoast("indulhat a telepítés jejeje");
+            startActivity(installIntent);
+            unregisterReceiver(this);
+            finish();
+        }
+    };
+
+
+    public void initialize() {
         button = (Button)findViewById(R.id.button);
         button2 = (Button)findViewById(R.id.button2);
         mpdf = Boolean.FALSE;
@@ -276,7 +262,8 @@ public class MainActivity extends AppCompatActivity {
         button2.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Update("https://github.com/MatyiFKBT/ErettsegiDroid/releases/download/1.1/app-debug.apk");
+                Update();
+                //"https://github.com/MatyiFKBT/ErettsegiDroid/releases/download/1.1/app-debug.apk"
                 printtoast("Frissítés elindult");
                 return true;
             }
