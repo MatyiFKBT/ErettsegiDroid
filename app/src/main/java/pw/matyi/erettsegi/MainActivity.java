@@ -86,26 +86,15 @@ public class MainActivity extends AppCompatActivity {
             downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
             uri = Uri.parse(mlink);
             request = new DownloadManager.Request(uri);
-            //downloadManager.enqueue(request);
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, File.separator + "Erettsegi" + File.separator + fileName);
             reference = downloadManager.enqueue(request);
-            //printtoast("Megoldás letöltve.");
+            printtoast(fileName + " letöltése folyamatban...");
             megoldas.setChecked(false);
             mpdf = Boolean.FALSE;
         } else if (!mpdf) {
-            /*Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    // Actions to do after 1 second
-                    File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Erettsegi/" + fileName);
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(file), "application/pdf");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    startActivity(intent);
-                }
-            }, 3000);
-        */}
+          //TODO pdf megnyitas ha nincs megoldas pdf, gomb ertekeket cserelje
+            }
     }
     public void printtoast(String szoveg) {
         Toast.makeText(this, szoveg, Toast.LENGTH_SHORT).show();
@@ -175,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
     }
     public void megoldascheck(View v) {
         megoldas = (CheckBox)v;
-        //String buttontext = getString(R.id.button);
         if (megoldas.isChecked()) {
             //Set megoldas;
             mpdf = Boolean.TRUE;
@@ -184,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
             //set megoldas
             mpdf = Boolean.FALSE;
             printtoast("megoldas uncheck");
-            //button.setText(buttontext);
+            //button.setText("Letöltés és megnyitás");
 
         }
     }
@@ -206,7 +194,6 @@ public class MainActivity extends AppCompatActivity {
                         String destination = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Erettsegi/";
                         File update = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Erettsegi/update.apk");
                         if (update.exists()) {
-                            //file.delete() - test this, I think sometimes it doesnt work
                             update.delete();
                             printtoast("Előző update.apk sikeresen törölve.");
                         }
@@ -263,8 +250,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onLongClick(View v) {
                 Update();
-                //"https://github.com/MatyiFKBT/ErettsegiDroid/releases/download/1.1/app-debug.apk"
-                printtoast("Frissítés elindult");
                 return true;
             }
         });
@@ -273,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onLongClick(View v) {
                 Intent marketpdf = new Intent(Intent.ACTION_VIEW);
+                printtoast("Ezt töltsd le, hogy meg tudd nyitni a letöltött pdf fájlt.");
                 marketpdf.setData(Uri.parse("market://details?id=com.google.android.apps.pdfviewer"));
                 startActivity(marketpdf);
                 return true;
