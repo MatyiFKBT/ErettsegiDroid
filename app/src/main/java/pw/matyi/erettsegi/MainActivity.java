@@ -43,12 +43,13 @@ public class MainActivity extends AppCompatActivity {
     Spinner spinner;
     CheckBox oktober, majus, megoldas;
     Button button, button2;
-    String honap,evszak;
-    String szint, szintbetu;
     Switch szintkapcs;
+    String honap, evszak;
+    String szint, szintbetu;
     String fileName;
     Boolean mpdf;
     DownloadManager downloadManager;
+
     long downloadReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,13 +73,14 @@ public class MainActivity extends AppCompatActivity {
         String[] linksplit = link.split("/");
         fileName = linksplit[linksplit.length-1];
         printtoast(fileName + " letöltése folyamatban...");
+        debuglog(fileName + " letöltése folyamatban...");
         downloadManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(link);
         DownloadManager.Request request = new DownloadManager.Request(uri);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, File.separator + "Erettsegi" + File.separator + fileName);
         Long reference = downloadManager.enqueue(request);
-        //printtoast("Feladatlap letöltve.");
+        debuglog("Feladatlap letöltve.");
         if (mpdf) {
             String mlink = "http://dload.oktatas.educatio.hu/erettsegi/feladatok_20" + ev + evszak + "_" + szint + "/" + szintbetu + "_" + targy + "_" + ev + honap + "_ut.pdf";
             linksplit = mlink.split("/");
@@ -89,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, File.separator + "Erettsegi" + File.separator + fileName);
             reference = downloadManager.enqueue(request);
-            printtoast(fileName + " letöltése folyamatban...");
+            //printtoast(fileName + " letöltése folyamatban...");
+            debuglog(fileName + " letöltése folyamatban...");
             megoldas.setChecked(false);
             mpdf = Boolean.FALSE;
         } else if (!mpdf) {
@@ -132,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             //Set evszak,honap
             honap = "okt";
             evszak = "osz";
-            printtoast(evszak);
+            debuglog(evszak);
             majus = (CheckBox) findViewById(R.id.majus);
             majus.setChecked(false);
         }
@@ -143,11 +146,11 @@ public class MainActivity extends AppCompatActivity {
         if (szintkapcs.isChecked()) {
             szint = "emelt";
             szintbetu = "e";
-            printtoast("Emelt kiválasztva.");
+            debuglog("Emelt kiválasztva.");
         } else {
             szint = "kozep";
             szintbetu = "k";
-            printtoast("Közép kiválasztva.");
+            debuglog("Közép kiválasztva.");
         }
     }
 
@@ -157,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
             //Set evszak,honap
             honap = "maj";
             evszak = "tavasz";
-            printtoast(evszak);
+            debuglog(evszak);
             oktober = (CheckBox) findViewById(R.id.oktober);
             oktober.setChecked(false);
         }
@@ -167,11 +170,12 @@ public class MainActivity extends AppCompatActivity {
         if (megoldas.isChecked()) {
             //Set megoldas;
             mpdf = Boolean.TRUE;
+            debuglog("megoldas check");
             //button.setText("Letöltés");
         } else if (!megoldas.isChecked()) {
             //set megoldas
             mpdf = Boolean.FALSE;
-            printtoast("megoldas uncheck");
+            debuglog("megoldas uncheck");
             //button.setText("Letöltés és megnyitás");
 
         }
@@ -184,22 +188,25 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         printtoast("Rendben, máris frissítjük az alkalmazást.");
+                        debuglog("update started");
                         downloadManager = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);
                         String apkurl = "https://github.com/MatyiFKBT/ErettsegiDroid/releases/download/1.2/app-debug.apk";
                         Uri Download_Uri = Uri.parse(apkurl);
                         DownloadManager.Request u_request = new DownloadManager.Request(Download_Uri);
                         u_request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
                         u_request.setAllowedOverRoaming(false);
-                        u_request.setTitle("My Android App Update");
+                        u_request.setTitle("Érettségi update");
                         String destination = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Erettsegi/";
+                        debuglog("Hely: " + destination);
                         File update = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Erettsegi/update.apk");
                         if (update.exists()) {
                             update.delete();
                             printtoast("Előző update.apk sikeresen törölve.");
+                            debuglog("Előző update.apk sikeresen törölve.");
                         }
                         u_request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, File.separator + "Erettsegi" + File.separator + "update.apk");
                         downloadReference = downloadManager.enqueue(u_request);
-                        Log.d("ADebugtag", "Value:" + downloadReference);
+                        debuglog("Downloadreference "+downloadReference);
                         registerReceiver(downloadReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
                     }
                 })
@@ -219,7 +226,9 @@ public class MainActivity extends AppCompatActivity {
             String destination = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Erettsegi/";
             String fileName = "update.apk";
             destination += fileName;
+            debuglog("Hely: "+destination);
             final Uri fileuri = Uri.parse("file://" + destination);
+            debuglog("fileuri: "+fileuri);
             Intent installIntent = new Intent(Intent.ACTION_VIEW);
             installIntent.setDataAndType(fileuri, downloadManager.getMimeTypeForDownloadedFile(downloadReference));
             Log.d("ADebugTag", "Value: " + fileuri);
@@ -231,8 +240,9 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     };
-
-
+    void debuglog(String log) {
+        Log.d("Debug",log);
+    }
     public void initialize() {
         button = (Button)findViewById(R.id.button);
         button2 = (Button)findViewById(R.id.button2);
@@ -261,6 +271,7 @@ public class MainActivity extends AppCompatActivity {
                 printtoast("Ezt töltsd le, hogy meg tudd nyitni a letöltött pdf fájlt.");
                 marketpdf.setData(Uri.parse("market://details?id=com.google.android.apps.pdfviewer"));
                 startActivity(marketpdf);
+                debuglog("market siker");
                 return true;
             }
         });
