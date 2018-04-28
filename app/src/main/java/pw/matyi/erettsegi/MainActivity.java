@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void Update() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setMessage("Biztosan frissíteni szeretnéd? Lehet hogy nem stabil a legfrisebb változat!\n(A frissítés jelenleg csak wifivel lehetséges.")
+        builder.setMessage("Biztosan frissíteni szeretnéd? Lehet hogy nem stabil a legfrisebb változat!\n(A frissítés jelenleg csak wifivel lehetséges.)")
                 .setPositiveButton("Igen", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -216,14 +216,15 @@ public class MainActivity extends AppCompatActivity {
     BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Intent installIntent = new Intent(Intent.ACTION_VIEW);
             String destination = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Erettsegi/";
             String fileName = "update.apk";
             destination += fileName;
             final Uri fileuri = Uri.parse("file://" + destination);
-            installIntent.setDataAndType(fileuri,
-                    downloadManager.getMimeTypeForDownloadedFile(downloadReference));
+            Intent installIntent = new Intent(Intent.ACTION_VIEW)
+                    .setData(fileuri)
+                    .setType("application/android.com.app");
             Log.d("ADebugTag", "Value: " + fileuri);
+            Log.d("DebugTag", installIntent.getType());
             installIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             printtoast("indulhat a telepítés jejeje");
             startActivity(installIntent);
