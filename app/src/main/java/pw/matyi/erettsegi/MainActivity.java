@@ -183,14 +183,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void Update() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setMessage("Biztosan frissíteni szeretnéd? Lehet hogy nem stabil a legfrisebb változat!\n(A frissítés jelenleg csak wifivel lehetséges.)")
-                .setPositiveButton("Igen, pont kérni akartam", new DialogInterface.OnClickListener() {
+        builder.setMessage("Biztosan frissíteni szeretnéd?\nLehet hogy nem stabil a legfrisebb változat!\n(A frissítés jelenleg csak wifivel lehetséges.)")
+                .setPositiveButton("Igen", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         printtoast("Rendben, máris frissítjük az alkalmazást.");
                         debuglog("update started");
-                        downloadManager = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);
-                        String apkurl = "https://github.com/MatyiFKBT/ErettsegiDroid/raw/master/app/build/outputs/apk/debug/app-debug.apk";
+                        downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                        String version = "1.3";
+                        String apkurl = "https://github.com/MatyiFKBT/ErettsegiDroid/releases/download/" + version + "/app-debug.apk";
                         Uri Download_Uri = Uri.parse(apkurl);
                         DownloadManager.Request u_request = new DownloadManager.Request(Download_Uri);
                         u_request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
@@ -210,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
                         registerReceiver(downloadReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
                     }
                 })
-                .setNegativeButton("Nem, majd máskor", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Nem", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         printtoast("Oké, akkor majd ha készen állsz, frissítsd");
