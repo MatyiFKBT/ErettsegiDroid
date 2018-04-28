@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         printtoast("Rendben, máris frissítjük az alkalmazást.");
                         downloadManager = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);
-                        String apkurl = "https://github.com/MatyiFKBT/ErettsegiDroid/releases/download/1.1/app-debug.apk";
+                        String apkurl = "https://github.com/MatyiFKBT/ErettsegiDroid/raw/master/app/build/outputs/apk/debug/app-debug.apk";
                         Uri Download_Uri = Uri.parse(apkurl);
                         DownloadManager.Request u_request = new DownloadManager.Request(Download_Uri);
                         u_request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
