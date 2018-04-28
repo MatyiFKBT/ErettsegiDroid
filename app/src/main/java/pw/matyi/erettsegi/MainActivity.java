@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
             final Uri fileuri = Uri.parse("file://" + destination);
             Intent installIntent = new Intent(Intent.ACTION_VIEW)
                     .setData(fileuri)
-                    .setType("application/android.com.app");
+                    .setType("application/vnd.android.package-archive");
             Log.d("ADebugTag", "Value: " + fileuri);
             Log.d("DebugTag", installIntent.getType());
             installIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
