@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         printtoast("Rendben, máris frissítjük az alkalmazást.");
                         downloadManager = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);
-                        String apkurl = "https://github.com/MatyiFKBT/ErettsegiDroid/raw/master/app/build/outputs/apk/debug/app-debug.apk";
+                        String apkurl = "https://github.com/MatyiFKBT/ErettsegiDroid/releases/download/1.2/app-debug.apk";
                         Uri Download_Uri = Uri.parse(apkurl);
                         DownloadManager.Request u_request = new DownloadManager.Request(Download_Uri);
                         u_request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
@@ -220,9 +220,8 @@ public class MainActivity extends AppCompatActivity {
             String fileName = "update.apk";
             destination += fileName;
             final Uri fileuri = Uri.parse("file://" + destination);
-            Intent installIntent = new Intent(Intent.ACTION_VIEW)
-                    .setData(fileuri)
-                    .setType("application/vnd.android.package-archive");
+            Intent installIntent = new Intent(Intent.ACTION_VIEW);
+            installIntent.setDataAndType(fileuri, downloadManager.getMimeTypeForDownloadedFile(downloadReference));
             Log.d("ADebugTag", "Value: " + fileuri);
             Log.d("DebugTag", installIntent.getType());
             installIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
