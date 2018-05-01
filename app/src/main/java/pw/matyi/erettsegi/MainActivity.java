@@ -1,6 +1,7 @@
 package pw.matyi.erettsegi;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
@@ -11,13 +12,11 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,16 +24,9 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Scanner;
 
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
@@ -48,15 +40,20 @@ public class MainActivity extends AppCompatActivity {
     String szint, szintbetu;
     String fileName;
     Boolean mpdf;
-    DownloadManager downloadManager;
+    DownloadManager updateManager, downloadManager;
 
-    long downloadReference;
+    ////////////////////////////////////////
+    String version = "1.5"; // vagyis 1.4
+    ////////////////////////////////////////
+
+    long downloadReference, reference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        evinput = (EditText) findViewById(R.id.ev);
+        evinput = findViewById(R.id.ev);
         permission_check();
 
 
@@ -64,22 +61,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void download() {
         String ev = evinput.getText().toString();
-        spinner = (Spinner)this.findViewById(R.id.spinner);
+        spinner = this.findViewById(R.id.spinner);
         String targy = getResources().getStringArray(R.array.targy_values)[spinner.getSelectedItemPosition()];
-        if(targy == "null") {
+        if (targy.equals("null")) {
             printtoast("Válassz egy tantárgyat!");
         }
-        String link = "http://dload.oktatas.educatio.hu/erettsegi/feladatok_20"+ev+evszak+"_"+szint+"/"+szintbetu+"_"+targy+"_"+ev+honap+"_fl.pdf";
+        String link = "http://dload.oktatas.educatio.hu/erettsegi/feladatok_20" + ev + evszak + "_" + szint + "/" + szintbetu + "_" + targy + "_" + ev + honap + "_fl.pdf";
         String[] linksplit = link.split("/");
-        fileName = linksplit[linksplit.length-1];
+        fileName = linksplit[linksplit.length - 1];
         printtoast(fileName + " letöltése folyamatban...");
         debuglog(fileName + " letöltése folyamatban...");
-        downloadManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
+        downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(link);
         DownloadManager.Request request = new DownloadManager.Request(uri);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, File.separator + "Erettsegi" + File.separator + fileName);
-        Long reference = downloadManager.enqueue(request);
+        reference = downloadManager.enqueue(request);
         debuglog("Feladatlap letöltve.");
         if (mpdf) {
             String mlink = "http://dload.oktatas.educatio.hu/erettsegi/feladatok_20" + ev + evszak + "_" + szint + "/" + szintbetu + "_" + targy + "_" + ev + honap + "_ut.pdf";
@@ -95,19 +92,40 @@ public class MainActivity extends AppCompatActivity {
             debuglog(fileName + " letöltése folyamatban...");
             megoldas.setChecked(false);
             mpdf = Boolean.FALSE;
-        } else if (!mpdf) {
-          //TODO pdf megnyitas ha nincs megoldas pdf, gomb ertekeket cserelje
-            }
+        } else {
+            //TODO pdf megnyitas ha nincs megoldas pdf, gomb ertekeket cserelje
+            registerReceiver(csakpdf, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        }
     }
+
+    BroadcastReceiver csakpdf = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            debuglog("kész a letöltés,megnyitás");
+            String destination = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Erettsegi/";
+            destination += fileName;
+            debuglog("Hely: " + destination);
+            final Uri pdfhely = Uri.parse("file://" + destination);
+            debuglog("fileuri: " + pdfhely);
+            Intent megnyitas = new Intent(Intent.ACTION_VIEW);
+            megnyitas.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            debuglog(downloadManager.getMimeTypeForDownloadedFile(reference));
+            megnyitas.setDataAndType(pdfhely, "application/pdf");
+            startActivity(megnyitas);
+            unregisterReceiver(this);
+            finish();
+        }
+    };
+
     public void printtoast(String szoveg) {
         Toast.makeText(this, szoveg, Toast.LENGTH_SHORT).show();
     }
 
     private void permission_check() {
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},100);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
                 return;
             }
         }
@@ -117,12 +135,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 100 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+        if (requestCode == 100 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             initialize();
         } else {
             permission_check();
         }
     }
+
     public void viewDownloads(View v) {
         Intent i = new Intent();
         i.setAction(DownloadManager.ACTION_VIEW_DOWNLOADS);
@@ -130,19 +149,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void itemClicked_o(View v) {
-        oktober = (CheckBox)v;
+        oktober = (CheckBox) v;
         if (oktober.isChecked()) {
             //Set evszak,honap
             honap = "okt";
             evszak = "osz";
             debuglog(evszak);
-            majus = (CheckBox) findViewById(R.id.majus);
+            majus = findViewById(R.id.majus);
             majus.setChecked(false);
         }
     }
 
     public void szintkapcs(View v) {
-        szintkapcs = (Switch)v;
+        szintkapcs = (Switch) v;
         if (szintkapcs.isChecked()) {
             szint = "emelt";
             szintbetu = "e";
@@ -155,28 +174,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void itemClicked_m(View v) {
-        majus = (CheckBox)v;
+        majus = (CheckBox) v;
         if (majus.isChecked()) {
             //Set evszak,honap
             honap = "maj";
             evszak = "tavasz";
             debuglog(evszak);
-            oktober = (CheckBox) findViewById(R.id.oktober);
+            oktober = findViewById(R.id.oktober);
             oktober.setChecked(false);
         }
     }
+
+    @SuppressLint("SetTextI18n")
     public void megoldascheck(View v) {
-        megoldas = (CheckBox)v;
+        megoldas = (CheckBox) v;
         if (megoldas.isChecked()) {
             //Set megoldas;
             mpdf = Boolean.TRUE;
             debuglog("megoldas check");
-            //button.setText("Letöltés");
+            button.setText("Letöltés");
         } else if (!megoldas.isChecked()) {
             //set megoldas
             mpdf = Boolean.FALSE;
             debuglog("megoldas uncheck");
-            //button.setText("Letöltés és megnyitás");
+            button.setText("Letöltés és megnyitás");
 
         }
     }
@@ -189,8 +210,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         printtoast("Rendben, máris frissítjük az alkalmazást.");
                         debuglog("update started");
-                        downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                        String version = "1.3";
+                        updateManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                         String apkurl = "https://github.com/MatyiFKBT/ErettsegiDroid/releases/download/" + version + "/app-debug.apk";
                         Uri Download_Uri = Uri.parse(apkurl);
                         DownloadManager.Request u_request = new DownloadManager.Request(Download_Uri);
@@ -201,13 +221,14 @@ public class MainActivity extends AppCompatActivity {
                         debuglog("Hely: " + destination);
                         File update = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Erettsegi/update.apk");
                         if (update.exists()) {
+                            //noinspection ResultOfMethodCallIgnored
                             update.delete();
                             printtoast("Előző update.apk sikeresen törölve.");
                             debuglog("Előző update.apk sikeresen törölve.");
                         }
                         u_request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, File.separator + "Erettsegi" + File.separator + "update.apk");
-                        downloadReference = downloadManager.enqueue(u_request);
-                        debuglog("Downloadreference "+downloadReference);
+                        downloadReference = updateManager.enqueue(u_request);
+                        debuglog("Downloadreference " + downloadReference);
                         registerReceiver(downloadReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
                     }
                 })
@@ -227,26 +248,28 @@ public class MainActivity extends AppCompatActivity {
             String destination = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Erettsegi/";
             String fileName = "update.apk";
             destination += fileName;
-            debuglog("Hely: "+destination);
+            debuglog("Hely: " + destination);
             final Uri fileuri = Uri.parse("file://" + destination);
-            debuglog("fileuri: "+fileuri);
+            debuglog("fileuri: " + fileuri);
             Intent installIntent = new Intent(Intent.ACTION_VIEW);
-            installIntent.setDataAndType(fileuri, downloadManager.getMimeTypeForDownloadedFile(downloadReference));
-            Log.d("ADebugTag", "Value: " + fileuri);
-            Log.d("DebugTag", installIntent.getType());
             installIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            installIntent.setDataAndType(fileuri, "application/vnd.android.package-archive");
+            Log.d("ADebugTag", "Value: " + fileuri);
+            Log.d("DebugTag", "download uri " + updateManager.getMimeTypeForDownloadedFile(downloadReference));
             printtoast("indulhat a telepítés jejeje");
             startActivity(installIntent);
             unregisterReceiver(this);
             finish();
         }
     };
+
     void debuglog(String log) {
-        Log.d("Debug",log);
+        Log.d("Debug", log);
     }
+
     public void initialize() {
-        button = (Button)findViewById(R.id.button);
-        button2 = (Button)findViewById(R.id.button2);
+        button = findViewById(R.id.button);
+        button2 = findViewById(R.id.button2);
         mpdf = Boolean.FALSE;
         szint = "kozep";
         szintbetu = "k";

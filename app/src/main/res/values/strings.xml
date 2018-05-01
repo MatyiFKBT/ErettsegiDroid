@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Érettségi</string>
     <string name="targy_v">Válassz egy tárgyat:</string>
-    <string name="letoltes">Letöltés</string>
+    <string name="letoltes">Letöltés és megnyitás</string>
     <string name="megoldasCheck">Megoldást is töltsön le</string>
     <string name="okt">Október</string>
     <string name="majű">Május</string>
