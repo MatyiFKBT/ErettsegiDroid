@@ -18,6 +18,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -202,6 +205,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
     public void Update() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setMessage("Biztosan frissíteni szeretnéd?\nLehet hogy nem stabil a legfrisebb változat!\n(A frissítés jelenleg csak wifivel lehetséges.)")
@@ -300,5 +305,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void Update(MenuItem item) {
     }
 }

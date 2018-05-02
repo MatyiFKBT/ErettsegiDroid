@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "528858545670",
+    "firebase_url": "https://erettsegidroid.firebaseio.com",
+    "project_id": "erettsegidroid",
+    "storage_bucket": "erettsegidroid.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:528858545670:android:6c5f2de2e10d78a1",
+        "android_client_info": {
+          "package_name": "pw.matyi.erettsegi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "528858545670-f9dii98a9lku2h7ikman1r6hj16b99dp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfeOLx9w-1RejpxK--LPJDOPLQrFkC-jM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
